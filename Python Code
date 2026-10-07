@@ -1,0 +1,56 @@
+#Task: Given a potential energy function for a spring's anharmonic motion,
+# find the equations of motion using Lagrangian mechanics and sympy
+import sympy as sp
+
+#Parameters
+t = sp.Symbol('t')
+a = sp.Symbol('a')
+k = 1
+# Use sp.Function() instead of sp.Symbol() for functions like x(t), E(r), etc.
+x = sp.Function('x')(t)
+dx = sp.diff(x, t)
+ddx = sp.diff(dx, t)
+V_x = (0.5*(k*x**2))+(0.25*(a * x**4))
+display('Potential:', V_x)
+
+# find force, where Force = -dV/dx
+# setup the equations of motion using Lagrangian so mx"=F(x)
+# Imagine a is very, very small. Find the 4th-order Taylor Expansion
+# Total energy is E=K+V. Suppose the particle starts from rest with v=0 at amplitude x=A.
+## Write the definite integral representing the time it takes to go from x=0 to x=A
+#
+
+#Pt. 1
+Force = -sp.diff(V_x, x)
+display('Force:', Force)
+# Pt. 2
+def eom(V):
+    #mx" = F(x)
+    m = 1
+    F_X = sp.diff(V, x)
+    T = (0.5)*m*(dx)**2
+    L = T - V
+    display('Lagrangian:', L)
+    kinetic = sp.diff(L, dx)
+    eom = sp.Eq(sp.diff(kinetic, t) - sp.diff(L, x),0)
+    display('EOM:', eom)
+eom(V_x)
+
+# Pt. 3
+expansion = sp.series(V_x, a, 0, 4)
+display('Taylor Expansion', expansion)
+
+
+# Pt. 4
+def energy(V_x):
+  A = sp.Symbol('A')
+  x_static = sp.Symbol('X')
+  m = 1
+  E_0 = V_x.subs(x, A)
+  display(E_0)
+  V_static = V_x.subs(x, x_static)
+  v = sp.sqrt((2 / m)*(E_0 - V_static))
+  integrand = 1 / v
+  time_integral = sp.Integral(integrand, (x_static, 0, A))
+  display('Time:', time_integral)
+energy(V_x)
